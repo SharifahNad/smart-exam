@@ -5,9 +5,10 @@ from pathlib import Path
 ADMIN_USERNAME = "admin"
 ADMIN_SECRET = "SMARTEXAM2026"
 
-def _file_to_base64(path):
+def _file_to_base64(path="assets/logo.png"):
     """Baca fail dan tukar ke base64 (embed dalam HTML, selamat untuk hosting)."""
-    f = Path(path)
+    base_dir = Path(__file__).parent
+    f = base_dir / path
     if f.exists():
         return base64.b64encode(f.read_bytes()).decode()
     return None
