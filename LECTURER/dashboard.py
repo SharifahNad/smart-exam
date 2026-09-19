@@ -19,11 +19,15 @@ def ic(name, size=20, color="#78716c"):
 import base64
 from pathlib import Path
 
-def _file_to_base64(path):
-    f = Path(path)
+def _file_to_base64(path="assets/logo.png"):
+    # Cari logo relatif kepada lokasi fail .py ni (bukan folder semasa),
+    # supaya logo keluar bila di-host di Streamlit Cloud.
+    base_dir = Path(__file__).parent
+    f = base_dir / path
     if f.exists():
         return base64.b64encode(f.read_bytes()).decode()
     return None
+
 
 # =========================================================
 # CSS
