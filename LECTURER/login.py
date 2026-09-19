@@ -2,11 +2,17 @@ import streamlit as st
 import base64
 from pathlib import Path
 
-from firebase_admin import firestore
-
 from firebase_service import db
 
 LECTURER_CODE = "LECTURER2026"
+
+def get_logo_base64(path="assets/logo.png"):
+    """Baca fail logo dan tukar ke base64 supaya boleh embed terus dalam HTML."""
+    logo_file = Path(path)
+    if logo_file.exists():
+        data = base64.b64encode(logo_file.read_bytes()).decode()
+        return f"data:image/png;base64,{data}"
+    return None
 
 # --- Firebase ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
