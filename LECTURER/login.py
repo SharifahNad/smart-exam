@@ -8,25 +8,8 @@ LECTURER_CODE = "LECTURER2026"
 
 def get_logo_base64(path="assets/logo.png"):
     """Baca fail logo dan tukar ke base64 supaya boleh embed terus dalam HTML."""
-    logo_file = Path(path)
-    if logo_file.exists():
-        data = base64.b64encode(logo_file.read_bytes()).decode()
-        return f"data:image/png;base64,{data}"
-    return None
-
-# --- Firebase ---
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-firebase_file = os.path.join(BASE_DIR, "firebase_config.json")
-
-if not firebase_admin._apps:
-    cred = credentials.Certificate(firebase_file)
-    firebase_admin.initialize_app(cred)
-
-db = firestore.client()
-
-def get_logo_base64(path="assets/logo.png"):
-    """Baca fail logo dan tukar ke base64 supaya boleh embed terus dalam HTML."""
-    logo_file = Path(path)
+    base_dir = Path(__file__).parent
+    logo_file = base_dir / path
     if logo_file.exists():
         data = base64.b64encode(logo_file.read_bytes()).decode()
         return f"data:image/png;base64,{data}"
@@ -54,7 +37,6 @@ def login_page():
         padding-top: 30px;
     }
 
-    /* ===== HEKSAGON LOGO ===== */
     .logo-wrap { text-align: center; margin-bottom: 6px; }
 
     .logo-hex {
@@ -165,7 +147,6 @@ def login_page():
     </style>
     """, unsafe_allow_html=True)
 
-    # --- Header: heksagon logo + tajuk ---
     logo_src = get_logo_base64("assets/logo.png")
 
     if logo_src:
@@ -212,7 +193,6 @@ def login_page():
         type="primary"
     ):
 
-        # 1. Semak secret code.
         if lecturer_code != LECTURER_CODE:
             st.error("Invalid lecturer secret code.")
             return
@@ -225,13 +205,11 @@ def login_page():
             st.error("Please enter Class.")
             return
 
-        # Normalise course code (sama macam student/admin).
         import re
         normalised = re.sub(
             r"[^A-Za-z0-9_-]", "-", course_code.strip()
         ).upper()
 
-        # 2. Semak Course Code WUJUD dalam Firebase (collection exams).
         try:
             exam_doc = db.collection("exams").document(normalised).get()
         except Exception as e:
@@ -242,8 +220,6 @@ def login_page():
             st.error("Course Code not found. Please check and try again.")
             return
 
-        # 3. Semak CLASS wujud untuk course ini
-        #    (padan dengan className dalam exam_locations atau exam_students).
         input_class = class_name.strip().casefold()
         class_found = False
 
@@ -270,16 +246,12 @@ def login_page():
             st.error("Class not found for this Course Code. Please check and try again.")
             return
 
-        # Semua sah -> login berjaya.
         st.session_state.logged_in = True
         st.session_state.exam_id = normalised
         st.session_state.class_name = class_name.strip()
 
-        # Simpan status login dalam URL supaya kekal selepas page reload
-        # (auto-refresh / F5) -> tak auto logout.
         st.query_params["li"] = "1"
         st.query_params["exam"] = normalised
         st.query_params["cls"] = class_name.strip()
 
         st.rerun()
-
