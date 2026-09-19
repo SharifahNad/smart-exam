@@ -3,7 +3,7 @@ from html import escape
 
 import pandas as pd
 import streamlit as st
-import plotly.graph_objics as go
+import plotly.graph_objects as go
 from firebase_admin import firestore
 
 from firebase_service import db
