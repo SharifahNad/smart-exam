@@ -1,16 +1,10 @@
 from datetime import datetime, timezone, timedelta
 from html import escape
-import os
 
 import pandas as pd
 import streamlit as st
-import plotly.graph_objects as go
-import firebase_admin
-from firebase_admin import credentials, firestore
-
-# =========================================================
-# FIREBASE
-# =========================================================
+import plotly.graph_objics as go
+from firebase_admin import firestore
 
 from firebase_service import db
 
