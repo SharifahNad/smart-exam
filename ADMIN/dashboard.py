@@ -14,7 +14,8 @@ from login import ADMIN_SECRET
 
 def _logo_base64(path="assets/logo.png"):
     """Read the logo file and return base64 (embed in HTML). None if missing."""
-    f = Path(path)
+    base_dir = Path(__file__).parent
+    f = base_dir / path
     if f.exists():
         return base64.b64encode(f.read_bytes()).decode()
     return None
